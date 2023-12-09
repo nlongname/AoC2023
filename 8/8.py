@@ -37,5 +37,5 @@ for g in ghosts:
         steps += 1
     periods.append(steps-offsets[-1])
 
-if offsets == periods:
+if offsets == periods: # This shouldn't really work, but it was worth trying and it does, so...
     print("Part2:", lcm(*offsets))
