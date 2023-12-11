@@ -4,25 +4,16 @@ print("Day 11")
 
 from pprint import pprint
 
-new_data = []
+x_expansion = []
+y_expansion = []
 
-y=0
-while y < len(data):
+for x in range(len(data[0])):
+    if all([data[y][x]=='.' for y in range(len(data))]):
+        x_expansion.append(x)
+
+for y in range(len(data)):
     if data[y].count('#') == 0:
-        new_data.append(data[y])
-    new_data.append(data[y])
-    y += 1
-#pprint(new_data)
-#print(len(new_data))
-
-x = 0
-while x < len(new_data[0]):
-    if all([new_data[y][x]=='.' for y in range(len(new_data))]):
-        new_data = [new_data[y][:x]+['.']+new_data[y][x:] for y in range(len(new_data))]
-        x += 1
-    x += 1
-
-data = new_data
+        y_expansion.append(y)
 
 galaxies = []
 for y in range(len(data)):
@@ -30,9 +21,18 @@ for y in range(len(data)):
         if data[y][x] == '#':
             galaxies.append((y, x))
 
-total = 0
-for i in range(len(galaxies)):
-    for j in range(i+1, len(galaxies)):
-        total += abs(galaxies[i][0]-galaxies[j][0]) + abs(galaxies[i][1]-galaxies[j][1])
+def total_distances(galaxies, expansion_constant=1):
+    total = 0
+    for i in range(len(galaxies)):
+        for j in range(i+1, len(galaxies)):
+            low_x, high_x = min(galaxies[i][1], galaxies[j][1]), max(galaxies[i][1], galaxies[j][1])
+            low_y, high_y = min(galaxies[i][0], galaxies[j][0]), max(galaxies[i][0], galaxies[j][0])
 
-print("Part 1:", total)
+            total += ((high_x-low_x) + (high_y-low_y))
+
+            total += (expansion_constant-1)*len([y for y in y_expansion if low_y < y and y < high_y])
+            total += (expansion_constant-1)*len([x for x in x_expansion if low_x < x and x < high_x])
+    return total
+
+print("Part 1:", total_distances(galaxies, 2))
+print("Part 2:", total_distances(galaxies, 1000000))
