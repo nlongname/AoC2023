@@ -1,4 +1,4 @@
-with open('test_input.txt', 'r+') as f:
+with open('input.txt', 'r+') as f:
     data = [[c for c in line.strip('\n')] for line in f.readlines()]
 print("Day 11")
 
@@ -16,17 +16,23 @@ while y < len(data):
 #print(len(new_data))
 
 x = 0
-x_expansion = []
 while x < len(new_data[0]):
     if all([new_data[y][x]=='.' for y in range(len(new_data))]):
-        x_expansion.append(x)
+        new_data = [new_data[y][:x]+['.']+new_data[y][x:] for y in range(len(new_data))]
+        x += 1
     x += 1
 
-newer_data = []
-for y in range(len(new_data)):
-    newer_data.append([])
-    for x in range(len(new_data[0])):
-        newer_data[y].append(new_data[y][x])
-        if x in x_expansion:
-            newer_data[y].append('.')
-pprint(newer_data)
+data = new_data
+
+galaxies = []
+for y in range(len(data)):
+    for x in range(len(data[0])):
+        if data[y][x] == '#':
+            galaxies.append((y, x))
+
+total = 0
+for i in range(len(galaxies)):
+    for j in range(i+1, len(galaxies)):
+        total += abs(galaxies[i][0]-galaxies[j][0]) + abs(galaxies[i][1]-galaxies[j][1])
+
+print("Part 1:", total)
