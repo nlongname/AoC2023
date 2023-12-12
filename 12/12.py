@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 with open('input.txt', 'r+') as f:
     data = [line.strip('\n') for line in f.readlines()]
 print("Day 12")
@@ -6,9 +8,11 @@ print("Day 12")
 # see how many springs we have left, and that sets a limit on how far "off"
 # they can be from just being packed to the left
 # e.g. 2 extra springs, so first damaged can be 0, 1, or 2 unless specified
+# then take out that part and recurse on the remaining substring
 
-def combos(string, chunks):
-    if chunks == [] or string == '':
+@lru_cache
+def combos(string:str, chunks:tuple) -> int:
+    if chunks == () or string == '':
         if string.count('#') == 0:
             return 1
         else:
@@ -34,16 +38,23 @@ def combos(string, chunks):
             if string[:first].count('#') != 0:
                 break
             if string[first:first+chunks[0]].count('.') == 0 and (len(string)==first+chunks[0] or string[first+chunks[0]] != '#'):
-                subtotal = combos(string[first+chunks[0]+1:], chunks[1:])
+                subtotal = combos(string[first+chunks[0]+1:].strip('.'), chunks[1:])
                 total += subtotal
             first += 1
             if first > len(string):
                 break
         return total
+
 part1 = 0
+part2 = 0
 for line in data:
     s = line[:line.index(' ')]
-    c = [int(c) for c in line[line.index(' '):].split(',')]
+    s2 = (s+'?')*4+s
+    c = tuple(int(c) for c in line[line.index(' '):].split(','))
+    c2 = c*5
     part1 += combos(s, c)
+    part2 += combos(s2, c2)
     #print(s, c, combos(s,c))
+    #print(data.index(line), s2, c2, combos(s2, c2))
 print("Part 1:", part1)
+print("Part 2:", part2)
