@@ -29,7 +29,6 @@ while rollers:
 part1 = sum(len(data)-r[0] for r in done_rolling)
 print("Part 1:", part1)
 
-@cache
 def cycle(rollers):
     rollers = sorted(list(rollers), key=lambda r: r[0])
     done_rolling = set()
@@ -85,11 +84,15 @@ def cycle(rollers):
     return tuple(sorted(list(done_rolling)))
 
 rollers = tuple(sorted([r for r in original_rollers]))
-for i in range(1000000000):
-    if i % 1000000==0:
-        print(i)
-    done_rolling = cycle(rollers)
-    if rollers == done_rolling: #this is doing nothing, but it is cycling or else the cache wouldn't help
+roll_cache = {rollers:-1}
+num_cycles = 1000000000
+for i in range(num_cycles):
+    rollers = cycle(rollers)
+    if rollers in roll_cache:
+        cycle_length = i - roll_cache[rollers]
+        #print(i, cycle_length)
+        target = (num_cycles-i-1)%cycle_length + (i-cycle_length)
+        rollers = [x for x in roll_cache if roll_cache[x]==target][0]
         break
-    rollers = done_rolling
+    roll_cache[rollers] = i
 print("Part 2:", sum(len(data)-r[0] for r in rollers))
