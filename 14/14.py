@@ -2,7 +2,7 @@ from functools import cache
 
 with open('input.txt', 'r+') as f:
     data = [line.strip('\n') for line in f.readlines()]
-print("Day 13")
+print("Day 14")
 
 rollers = []
 stoppers = set()
